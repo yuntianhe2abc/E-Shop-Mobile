@@ -18,6 +18,11 @@ app.options("*", cors());
 app.use(express.json());
 app.use(morgan("tiny"));
 app.use(authJwt());
+app.use((err, req, res, next) => {
+  if (err) {
+    res.status(500).json({ message: err });
+  }
+});
 //Routers
 app.use(`${api}/products`, productRouter);
 app.use(`${api}/categories`, categoryRouter);
