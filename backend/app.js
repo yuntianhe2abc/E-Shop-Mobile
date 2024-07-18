@@ -5,6 +5,8 @@ const morgan = require("morgan");
 const mongoose = require("mongoose");
 const api = process.env.API_URL;
 const productRouter = require("./routers/products.router");
+const categoryRouter = require("./routers/categories.router");
+
 const cors = require("cors");
 
 //Allow any requests from any other origins
@@ -16,6 +18,7 @@ app.use(express.json());
 app.use(morgan("tiny"));
 //Routers
 app.use(`${api}/products`, productRouter);
+app.use(`${api}/categories`, categoryRouter);
 
 //Database
 mongoose
