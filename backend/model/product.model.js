@@ -16,5 +16,14 @@ const productSchema = mongoose.Schema({
   dateCreated: { type: Date, default: Date.now },
 });
 //product model
+// Duplicate the ID field.
+productSchema.virtual("id").get(function () {
+  return this._id.toHexString();
+});
+// Ensure virtual fields are serialised.
+productSchema.set("toJSON", {
+  virtuals: true,
+});
+
 //export Product object
 exports.Product = mongoose.model("Product", productSchema);

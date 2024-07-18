@@ -5,7 +5,11 @@ const { Category } = require("../model/category.model");
 const mongoose = require("mongoose");
 router.get("/", async (req, res) => {
   // const productList = await Product.find().select("name image");
-  const productList = await Product.find();
+  let filter = {};
+  if (req.query.categories) {
+    filter = { category: req.query.categories.split(",") };
+  }
+  const productList = await Product.find(filter);
 
   if (!productList) {
     res.status(500).json({ success: false });
@@ -92,4 +96,36 @@ router.delete("/:id", async (req, res) => {
     res.status(500).json({ error: err, success: false });
   }
 });
+
+router.get("/get/count", async (req, res) => {
+  const productCount = await Product.countDocuments();
+  if (!productCount) {
+    res.status(500).json({ success: false });
+  }
+  res.status(200).send({ count: productCount });
+});
+router.get("/get/featured", async (req, res) => {
+  const featuredProducts = await Product.find({
+    isFeatured: true,
+  });
+  console.log(featuredProducts);
+  if (!featuredProducts) {
+    res.status(500).json({ success: false });
+  }
+  res.status(200).send({ featuredProducts: featuredProducts });
+});
+
+router.get("/get/featured/:count", async (req, res) => {
+  const count = req.params.count ? req.params.count : 0;
+
+  const featuredProducts = await Product.find({
+    isFeatured: true,
+  }).limit(+count);
+  console.log(featuredProducts);
+  if (!featuredProducts) {
+    res.status(500).json({ success: false });
+  }
+  res.status(200).send({ featuredProducts: featuredProducts });
+});
+
 module.exports = router;
