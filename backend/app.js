@@ -9,20 +9,17 @@ const categoryRouter = require("./routers/categories.router");
 const userRouter = require("./routers/users.router");
 const authJwt = require("./helpers/jwt");
 const cors = require("cors");
-
+const errorHandler = require("./helpers/errHandler");
 //Allow any requests from any other origins
 app.use(cors());
 app.options("*", cors());
 //Middlewares
 //make data sent from frontend be understood by express
-app.use(express.json());
-app.use(morgan("tiny"));
+app.use(express.json()); // Needs parentheses because it's a factory function
+app.use(morgan("tiny")); // Needs parentheses because it’s a function that returns a middleware
 app.use(authJwt());
-app.use((err, req, res, next) => {
-  if (err) {
-    res.status(500).json({ message: err });
-  }
-});
+
+app.use(errorHandler); // No parentheses needed because errorHandler is already a middleware function
 //Routers
 app.use(`${api}/products`, productRouter);
 app.use(`${api}/categories`, categoryRouter);

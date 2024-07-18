@@ -76,7 +76,30 @@ router.put("/:id", async (req, res) => {
 
   res.send(user);
 });
-
+router.get("/get/count", async (req, res) => {
+  const userCount = await User.countDocuments();
+  if (!userCount) {
+    res.status(500).json({ success: false });
+  }
+  res.status(200).send({ count: userCount });
+});
+router.delete("/:id", async (req, res) => {
+  try {
+    const user = await User.findByIdAndDelete(req.params.id);
+    if (user) {
+      return res.status(200).json({
+        success: true,
+        message: "the user is deleted",
+      });
+    } else {
+      return res
+        .status(404)
+        .json({ success: false, message: "user not found" });
+    }
+  } catch (err) {
+    res.status(500).json({ error: err, success: false });
+  }
+});
 router.post("/login", async (req, res) => {
   const user = await User.findOne({ email: req.body.email });
   const secret = process.env.secret;
@@ -87,6 +110,7 @@ router.post("/login", async (req, res) => {
     const token = jwt.sign(
       {
         userId: user.id,
+        isAdmin: user.isAdmin,
       },
       secret,
       { expiresIn: "1d" }
