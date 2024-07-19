@@ -7,6 +7,8 @@ const api = process.env.API_URL;
 const productRouter = require("./routers/products.router");
 const categoryRouter = require("./routers/categories.router");
 const userRouter = require("./routers/users.router");
+const orderRouter = require("./routers/orders.router");
+
 const authJwt = require("./helpers/jwt");
 const cors = require("cors");
 const errorHandler = require("./helpers/errHandler");
@@ -18,12 +20,14 @@ app.options("*", cors());
 app.use(express.json()); // Needs parentheses because it's a factory function
 app.use(morgan("tiny")); // Needs parentheses because it’s a function that returns a middleware
 app.use(authJwt());
+app.use("/public/uploads", express.static(__dirname + "/public/uploads"));
 
 app.use(errorHandler); // No parentheses needed because errorHandler is already a middleware function
 //Routers
 app.use(`${api}/products`, productRouter);
 app.use(`${api}/categories`, categoryRouter);
 app.use(`${api}/users`, userRouter);
+app.use(`${api}/orders`, orderRouter);
 
 //Database
 mongoose
